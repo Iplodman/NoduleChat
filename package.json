@@ -1,0 +1,6 @@
+{
+	"name": "nodule-chat",
+	"version": "0.0.1",
+	"description": "Simple socket.io chat",
+	"dependencies": {}
+}

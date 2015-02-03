@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Nodule Chat</title>
+		
+		<style>
+			form.chat {
+				position: fixed;
+				bottom: 0;
+				padding-top: 50px;
+				padding-bottom: 50px;
+				padding-left: 40%;
+				width: auto;
+			}
+			
+			input.msgbox {
+				box-shadow: 2px 2px 7px #6E8078;
+			}
+			
+			button.send {
+				box-shadow: 2px 2px 7px #6E8078;
+				align: right;
+			}
+			
+			ul.chat {
+				margin-left: 50px;
+				margin-bottom: 100px;
+				margin-right: 50px;
+				box-shadow: 2px 2px 7px #6E8078;
+				background-color: white;
+				list-style-type: none;
+				height: auto;
+				padding: 5px 5px 5px 5px;
+			}
+			
+			li {
+				padding-top: 5px;
+				padding-bottom: 5px;
+			}
+			
+			li:nth-child(even) {
+				background-color: #E8E8E8;
+			}
+			
+			li.newuser {
+				color: blue;
+			}
+			
+			body {
+				background-color: #E3E3E3;
+			}
+			
+			h1 {
+				margin-left: 50px;
+				margin-right: 50px;
+				text-align: center;
+				box-shadow: 2px 2px 7px #6E8078;
+				background-color: white;
+			}
+			
+			h4.neutralalert {
+				text-align: center;
+			}
+		</style>
+		
+		<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+		<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+		<script>
+		$(document).ready(function() {
+		  var socket = io.connect();
+		  var username = prompt("Username (Leave blank for anonymous):");
+		  
+		  if (username == '' || username == null){
+		    username = "Anonymous"
+		  }
+		  
+		  socket.emit('user join', username);
+		  
+		  // Format and send the message.
+          $('#f').submit(function(){
+			var date = new Date;
+			var ts = "[" + date.getHours() + ":";
+			
+			if (date.getMinutes().toString().length == 1){
+			  ts = ts + "0"
+			}
+			ts = ts + date.getMinutes() + ":";
+			
+			if (date.getSeconds().toString().length == 1){
+			  ts = ts + "0"
+			}
+			ts = ts + date.getSeconds() + "] ";
+			
+            socket.emit('message', ts + username + ": " + $('#m').val());
+            $('#m').val('');
+            return false;
+          });
+		  
+		  socket.on('message', function(msg){
+			$('#messages').append($('<li>').text(msg));
+		  });
+		  
+		  socket.on('user join', function(msg){
+		    $('#messages').append($('<li class="newuser">').text(msg));
+		  });
+		});
+		</script>
+	</head>
